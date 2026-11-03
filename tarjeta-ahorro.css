@@ -1,0 +1,21 @@
+/* Tarjeta visual de ahorro, inspirada en los colores crema. */
+#savingsCard{position:relative;overflow:hidden;isolation:isolate;padding:18px 20px;border:1px solid #eed1a177;border-radius:19px;background:linear-gradient(125deg,#641021,#921c2e 62%,#501020);box-shadow:0 12px 28px #1807104d;color:#fff8eb}
+#savingsCard::before{content:"";position:absolute;z-index:-1;right:-65px;top:-100px;width:250px;height:250px;border:1px solid #fff2d11e;border-radius:50%;box-shadow:0 0 0 24px #fff2d10a,0 0 0 48px #fff2d108}
+#savingsCard .savings-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#savingsCard .savings-card-top img{width:40px;height:40px;object-fit:contain}
+#savingsCard .savings-card-brand{display:flex;align-items:center;gap:9px;color:#fbe4bb;font-size:11px;font-weight:850;letter-spacing:.13em}
+#savingsCard .savings-card-chip{width:35px;height:25px;margin:22px 0 12px;border-radius:6px;border:1px solid #f4ddb0;background:linear-gradient(135deg,#f9e6b5,#c9a46a);position:relative}
+#savingsCard .savings-card-chip::after{content:"";position:absolute;inset:7px 0;border-block:1px solid #94723d88}
+#savingsCard .savings-card-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#eacba8;font-weight:750}
+#savingsCard .amount{font-size:clamp(28px,4vw,39px);line-height:1.1;margin:6px 0 16px;color:#fffaf0;letter-spacing:-.04em}
+#savingsCard .savings-card-balance{position:relative}
+#savingsCard.balance-hidden .amount{visibility:hidden}
+#savingsCard.balance-hidden .savings-card-balance::after{content:"S/ ••••••";position:absolute;left:0;top:0;font-size:clamp(28px,4vw,39px);font-weight:800}
+#savingsCard .savings-card-footer{display:flex;justify-content:space-between;gap:15px;align-items:end}
+#savingsCard .savings-card-footer strong{display:block;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff8eb;font-size:13px}
+#savingsCard .savings-card-meta{text-align:right}
+#savingsCard .savings-card-toggle{display:inline-grid;place-items:center;min-width:40px;min-height:40px;padding:8px;margin:0;border:1px solid #f9e4c255;border-radius:12px;background:#ffffff18;color:#fff8eb}
+#savingsCard .savings-card-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#savingsCard .savings-card-toggle:hover{background:#ffffff30}
+@media(max-width:650px){#savingsCard{padding:16px}#savingsCard .amount,#savingsCard.balance-hidden .savings-card-balance::after{font-size:32px}}
+@media(prefers-reduced-motion:no-preference){#savingsCard{transition:transform .2s ease,box-shadow .2s ease}#savingsCard:hover{transform:translateY(-2px);box-shadow:0 16px 32px #18071055}}
