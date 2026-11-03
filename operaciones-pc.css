@@ -31,7 +31,7 @@
     box-shadow: none;
     font-weight: 750;
   }
-  .operations-tabs button[aria-selected="true"] { background: #851624; color: #fffaf1; }
+  .operations-tabs button[aria-pressed="true"] { background: #851624; color: #fffaf1; }
   .operations-panel > .card:not(.operation-active) { display: none !important; }
   .operations-panel > .card.operation-active {
     display: block;
@@ -49,5 +49,5 @@
   .dark-theme .operations-panel { background: #2a2225; border-color: #634449; }
   .dark-theme .operations-tabs { background: #3d2a30; }
   .dark-theme .operations-tabs button { color: #f1ddca; }
-  .dark-theme .operations-tabs button[aria-selected="true"] { background: #a02b39; color: white; }
+  .dark-theme .operations-tabs button[aria-pressed="true"] { background: #a02b39; color: white; }
 }
