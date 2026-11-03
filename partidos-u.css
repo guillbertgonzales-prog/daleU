@@ -1,1 +1,14 @@
 .match-widget{margin-top:12px;background:#fff8ec;color:#6f1923;border:1px solid #e6c9a8;border-radius:14px;overflow:hidden}.match-widget summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px 14px;font-weight:800}.match-widget summary::-webkit-details-marker{display:none}.match-widget summary::after{content:'+';font-size:20px}.match-widget[open] summary::after{content:'−'}.match-widget-body{padding:0 14px 14px}.match-result{padding:12px 0;border-top:1px solid #e9d9c7}.match-result strong{font-size:10px;letter-spacing:.09em;color:#9b5c4a}.match-teams{font-weight:850;font-size:15px;margin:5px 0}.match-result small,.match-note{display:block;font-size:11px;line-height:1.4;color:#805f53}.match-widget button{margin:8px 0 0;font-size:12px;padding:9px 12px}.match-widget button:disabled{opacity:.6}.dark-theme .match-widget{background:#302328;color:#f7e8d8;border-color:#70505a}.dark-theme .match-result{border-color:#70505a}.dark-theme .match-result strong,.dark-theme .match-result small,.dark-theme .match-note{color:#d9bfb1}
+.match-widget{border-radius:18px;box-shadow:0 8px 24px #4b121015}
+.match-result{margin:10px 0;padding:14px 12px;border:1px solid #ecd9c4;border-radius:15px;background:linear-gradient(145deg,#fffdf8,#f8eadc);text-align:center}
+.match-result>strong{display:block;text-align:left;letter-spacing:.12em}
+.match-scoreboard{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;margin:14px 0}
+.match-team{display:flex;min-width:0;flex-direction:column;align-items:center;gap:7px}
+.match-crest{display:grid;place-items:center;width:54px;height:54px;padding:5px;border-radius:16px;background:#fff;box-shadow:0 4px 12px #52171b18;font-size:20px;font-weight:800}
+.match-crest img{width:100%;height:100%;object-fit:contain}
+.match-team-name{max-width:100%;font-size:12px;font-weight:800;line-height:1.2;overflow-wrap:anywhere}
+.match-score{min-width:52px;font-size:22px;font-weight:900;letter-spacing:.02em;color:#861824}
+.match-result small{margin-top:6px}
+.dark-theme .match-result{background:linear-gradient(145deg,#392a2f,#302328);border-color:#70505a}
+.dark-theme .match-score{color:#f3d4ba}
+@media(max-width:380px){.match-crest{width:46px;height:46px;border-radius:13px}.match-score{font-size:19px;min-width:42px}.match-team-name{font-size:11px}}
