@@ -1,0 +1,51 @@
+(()=>{
+  const box=document.getElementById('matchWidget');
+  if(!box)return;
+  const next=box.querySelector('[data-match-next]');
+  const last=box.querySelector('[data-match-last]');
+  const note=box.querySelector('[data-match-note]');
+  const refresh=box.querySelector('[data-match-refresh]');
+  let loading=false,loaded=false;
+  const base='https://www.thesportsdb.com/api/v1/json/123/';
+  function dateText(e){
+    const iso=e.strTimestamp;
+    if(!iso)return 'Fecha por confirmar';
+    const d=new Date(iso.endsWith('Z')?iso:iso+'Z');
+    if(Number.isNaN(d.getTime()))return 'Fecha por confirmar';
+    return new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',dateStyle:'medium',timeStyle:'short'}).format(d)+' · hora de Perú';
+  }
+  function createLine(label,event,isLast){
+    const section=document.createElement('div');
+    section.className='match-result';
+    const heading=document.createElement('strong');heading.textContent=label;section.append(heading);
+    const teams=document.createElement('div');teams.className='match-teams';
+    teams.textContent=event.strHomeTeam+'  '+(isLast&&event.intHomeScore!=null&&event.intAwayScore!=null?event.intHomeScore+' – '+event.intAwayScore:'vs')+'  '+event.strAwayTeam;
+    section.append(teams);
+    const detail=document.createElement('small');
+    const status=String(event.strStatus||'').toUpperCase();
+    if(['PST','POSTPONED','CANC','CANCELLED'].includes(status)||event.strPostponed==='yes')detail.textContent='Aplazado o sujeto a cambios · confirma en la web oficial';
+    else detail.textContent=dateText(event)+(isLast?' · resultado reportado':'');
+    section.append(detail);return section;
+  }
+  async function get(path){
+    const response=await fetch(base+path+'?id=138329',{cache:'no-store'});
+    if(!response.ok)throw new Error('Fuente no disponible');
+    return response.json();
+  }
+  async function load(){
+    if(loading)return;loading=true;refresh.disabled=true;
+    note.textContent='Consultando partidos…';
+    const result=await Promise.allSettled([get('eventsnext.php'),get('eventslast.php')]);
+    const upcoming=result[0].status==='fulfilled'?(result[0].value.events||[])[0]:null;
+    const recent=result[1].status==='fulfilled'?(result[1].value.results||result[1].value.events||[])[0]:null;
+    next.replaceChildren();last.replaceChildren();
+    if(upcoming)next.append(createLine('PRÓXIMO PARTIDO COMO LOCAL',upcoming,false));
+    else next.textContent='No hay próximo partido como local disponible.';
+    if(recent&&recent.intHomeScore!=null&&recent.intAwayScore!=null)last.append(createLine('ÚLTIMO RESULTADO COMO LOCAL',recent,true));
+    else last.textContent='No hay resultado reciente como local disponible.';
+    note.textContent=result.every(x=>x.status==='rejected')?'No se pudieron cargar los datos. Revisa el calendario oficial.':'Fuente: TheSportsDB · Los datos pueden cambiar; confirma en la web oficial.';
+    loaded=result.some(x=>x.status==='fulfilled');loading=false;refresh.disabled=false;
+  }
+  box.addEventListener('toggle',()=>{if(box.open&&!loaded)load()});
+  refresh.addEventListener('click',load);
+})();
