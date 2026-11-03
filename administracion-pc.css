@@ -1,0 +1,23 @@
+/* Vista de administración para pantallas grandes. */
+@media (min-width: 900px) {
+  #goalOverlay:not([hidden]) {
+    display: grid;
+    grid-template-columns: minmax(220px, 270px) minmax(0, 850px);
+    grid-template-areas: "header header" "theme content" "menu content" ". content";
+    grid-template-rows: auto auto auto 1fr;
+    align-content: start;
+    align-items: start;
+    justify-content: center;
+    column-gap: 24px;
+    row-gap: 12px;
+    padding: 30px clamp(24px, 4vw, 64px) 60px;
+    overflow-y: auto;
+  }
+  #goalOverlay > .admin-header { grid-area: header; }
+  #goalOverlay > .admin-theme-toggle { grid-area: theme; width: 100%; margin: 0; }
+  #goalOverlay > .admin-tabs { grid-area: menu; display: flex; width: 100%; margin: 0; }
+  #goalOverlay > .overlay-card { grid-area: content; width: 100%; min-width: 0; padding: 22px 28px 28px; }
+  #goalOverlay > .admin-back { display: none !important; }
+  #goalOverlay .admin-tabs button { min-height: 64px; }
+  #goalOverlay .admin-tabs button[aria-pressed="true"] { box-shadow: 0 6px 18px #78182425; }
+}
