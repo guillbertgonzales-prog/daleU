@@ -1,0 +1,55 @@
+/* Una página principal más compacta para pantallas grandes. */
+@media (min-width: 900px) {
+  main { max-width: 1120px; margin-inline: auto; }
+  main > .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(310px, .82fr);
+    gap: 18px;
+    align-items: start;
+  }
+  .grid > .dashboard-carousel-wrap {
+    display: block;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+  .dashboard-carousel-wrap > .dashboard-carousel {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    gap: 0;
+    padding: 0;
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .dashboard-carousel::-webkit-scrollbar { display: none; }
+  .dashboard-carousel > .card {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    scroll-snap-align: start;
+    align-self: flex-start;
+  }
+  .carousel-hint { display: block; margin: 0 0 8px; font-size: 12px; }
+  .carousel-dots { display: flex; justify-content: center; gap: 12px; margin: 12px 0; }
+  .carousel-dots button {
+    width: 12px; height: 12px; min-width: 0; padding: 0; margin: 0;
+    border-radius: 50%; background: #d8bfa7;
+  }
+  .carousel-dots button[aria-current="true"] { background: #861824; box-shadow: 0 0 0 3px #f1dcc5; }
+  .grid > #savingSection { grid-column: 2; grid-row: 1; }
+  .grid > #withdrawSection { grid-column: 2; grid-row: 2; }
+  .grid > #savingSection, .grid > #withdrawSection { padding: 20px 22px; }
+  .grid > #savingSection h2, .grid > #withdrawSection h2 { font-size: 20px; }
+  .grid > .calendar-card { grid-column: 1 / -1; width: min(100%, 760px); justify-self: center; }
+  .calendar-card .calendar-day { min-height: 55px; }
+}
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .dashboard-carousel-wrap > .dashboard-carousel { scroll-behavior: auto; }
+}
