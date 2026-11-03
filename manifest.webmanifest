@@ -1,0 +1,12 @@
+{
+  "id": "./",
+  "name": "Y dale U",
+  "short_name": "Y dale U",
+  "description": "Tu ahorro, con garra crema.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8efe1",
+  "theme_color": "#851624",
+  "icons": [{"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+}
