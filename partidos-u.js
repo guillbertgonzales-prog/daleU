@@ -18,8 +18,21 @@
     const section=document.createElement('div');
     section.className='match-result';
     const heading=document.createElement('strong');heading.textContent=label;section.append(heading);
-    const teams=document.createElement('div');teams.className='match-teams';
-    teams.textContent=event.strHomeTeam+'  '+(isLast&&event.intHomeScore!=null&&event.intAwayScore!=null?event.intHomeScore+' – '+event.intAwayScore:'vs')+'  '+event.strAwayTeam;
+    const teams=document.createElement('div');teams.className='match-scoreboard';
+    function team(name,badge,id){
+      const side=document.createElement('div');side.className='match-team';
+      const crest=document.createElement('span');crest.className='match-crest';
+      const img=document.createElement('img');img.alt='';img.loading='lazy';
+      let safe='';try{const url=new URL(badge);if(url.protocol==='https:'&&url.hostname==='r2.thesportsdb.com')safe=url.href}catch{}
+      img.src=String(id)==='138329'?'u.png':safe;
+      img.onerror=()=>{img.remove();crest.textContent=(name||'?').trim().charAt(0).toUpperCase()};
+      if(img.getAttribute('src'))crest.append(img);else crest.textContent=(name||'?').trim().charAt(0).toUpperCase();
+      const text=document.createElement('span');text.className='match-team-name';text.textContent=name||'Equipo por confirmar';
+      side.append(crest,text);return side;
+    }
+    const score=document.createElement('div');score.className='match-score';
+    score.textContent=isLast&&event.intHomeScore!=null&&event.intAwayScore!=null?event.intHomeScore+' – '+event.intAwayScore:'VS';
+    teams.append(team(event.strHomeTeam,event.strHomeTeamBadge,event.idHomeTeam),score,team(event.strAwayTeam,event.strAwayTeamBadge,event.idAwayTeam));
     section.append(teams);
     const detail=document.createElement('small');
     const status=String(event.strStatus||'').toUpperCase();
