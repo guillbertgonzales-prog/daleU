@@ -1,0 +1,53 @@
+/* Operaciones reunidas en una tarjeta para escritorio. */
+.operations-panel { display: contents; }
+.operations-tabs { display: none; }
+@media (min-width: 900px) {
+  .grid > .dashboard-carousel-wrap { grid-row: 1; }
+  .grid > .operations-panel {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid #eaded0;
+    border-radius: 22px;
+    background: #fffbf4;
+    box-shadow: 0 12px 32px rgba(65,28,27,.07);
+  }
+  .operations-tabs {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 7px;
+    padding: 4px;
+    border-radius: 14px;
+    background: #f4e8d9;
+  }
+  .operations-tabs button {
+    margin: 0;
+    padding: 10px 12px;
+    border: 0;
+    background: transparent;
+    color: #784c46;
+    box-shadow: none;
+    font-weight: 750;
+  }
+  .operations-tabs button[aria-selected="true"] { background: #851624; color: #fffaf1; }
+  .operations-panel > .card:not(.operation-active) { display: none !important; }
+  .operations-panel > .card.operation-active {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 18px 8px 8px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .operations-panel h2 { margin: 0 0 10px; font-size: 20px; }
+  .grid > .calendar-card { grid-row: 2; width: min(100%, 660px); }
+  .calendar-card .calendar-day { min-height: 48px; }
+  .dark-theme .operations-panel { background: #2a2225; border-color: #634449; }
+  .dark-theme .operations-tabs { background: #3d2a30; }
+  .dark-theme .operations-tabs button { color: #f1ddca; }
+  .dark-theme .operations-tabs button[aria-selected="true"] { background: #a02b39; color: white; }
+}
