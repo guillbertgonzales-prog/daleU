@@ -1,0 +1,30 @@
+/* Animaciones suaves con la identidad crema. */
+@media (prefers-reduced-motion: no-preference) {
+  .ring-center::after {
+    content: "";
+    position: absolute;
+    inset: -35%;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 39%, rgba(255,255,255,.7) 49%, transparent 59%);
+    transform: translateX(-100%) rotate(12deg);
+    animation: crema-brillo 5s ease-in-out 1.2s infinite;
+  }
+  .hero .bar i {
+    transform-origin: left center;
+    animation: crema-progreso 1.15s cubic-bezier(.2,.75,.25,1) both;
+  }
+  .progress-ring { animation: crema-aparecer .8s ease-out both; }
+  #savingCelebration:not([hidden]) .celebration-content {
+    animation: crema-celebrar .65s cubic-bezier(.2,.8,.2,1) both;
+  }
+  #savingCelebration:not([hidden]) .saving-sparkles span {
+    filter: drop-shadow(0 0 8px rgba(255,225,150,.85));
+  }
+  @keyframes crema-brillo {
+    0%, 60% { transform: translateX(-100%) rotate(12deg); }
+    82%, 100% { transform: translateX(100%) rotate(12deg); }
+  }
+  @keyframes crema-progreso { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes crema-aparecer { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+  @keyframes crema-celebrar { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+}
