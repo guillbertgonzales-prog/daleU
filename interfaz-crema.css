@@ -50,7 +50,7 @@ main > header .header-actions button:focus-visible,.operations-tabs button:focus
 #goalOverlay .admin-signout{display:block;width:100%;margin:0;padding:11px 14px;border:1px solid #e8d6c0;border-radius:13px;background:#fffaf2;color:#761725;font-weight:750;text-align:center}
 #goalOverlay .admin-signout:hover{background:#f3e4d3}
 .dark-theme #goalOverlay .admin-signout{background:#302529;color:#f1ddca;border-color:#76515a}
-@media(min-width:900px){#goalOverlay .admin-signout{grid-area:theme;align-self:end;transform:translateY(54px)}#goalOverlay .admin-tabs{margin-top:54px}}
+@media(min-width:900px){#goalOverlay:not([hidden]){grid-template-areas:"header header" "theme content" "signout content" "menu content" ". content";grid-template-rows:auto auto auto auto 1fr}#goalOverlay .admin-signout{grid-area:signout}}
 @media(max-width:650px){
  main > header{flex-wrap:nowrap;gap:6px}
  main > header .header-brand{flex:0 0 auto}
