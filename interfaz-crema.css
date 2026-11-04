@@ -46,3 +46,20 @@ main > header .header-actions button:focus-visible,.operations-tabs button:focus
  .hero .ring-layout{gap:14px}
 }
 @media(max-width:360px){main > header .header-actions{flex-basis:230px}main > header .header-actions button{padding-inline:8px}}
+
+#goalOverlay .admin-signout{display:block;width:100%;margin:0;padding:11px 14px;border:1px solid #e8d6c0;border-radius:13px;background:#fffaf2;color:#761725;font-weight:750;text-align:center}
+#goalOverlay .admin-signout:hover{background:#f3e4d3}
+.dark-theme #goalOverlay .admin-signout{background:#302529;color:#f1ddca;border-color:#76515a}
+@media(min-width:900px){#goalOverlay .admin-signout{grid-area:theme;align-self:end;transform:translateY(54px)}#goalOverlay .admin-tabs{margin-top:54px}}
+@media(max-width:650px){
+ main > header{flex-wrap:nowrap;gap:6px}
+ main > header .header-brand{flex:0 0 auto}
+ main > header .header-crest{width:32px;height:32px}
+ main > header .header-actions{flex:1 1 auto;min-width:0;flex-wrap:nowrap;gap:4px}
+ main > header .header-actions button{flex:0 0 auto;min-width:34px;min-height:38px;padding:7px;font-size:11px}
+ main > header .header-actions #manageGoal{padding-inline:8px}
+ main > header .header-actions #logout{font-size:0}
+ main > header .header-actions #logout::after{content:'▷';font-size:17px;line-height:1}
+ main > header .header-actions .install-app{font-size:0}
+ main > header .header-actions .install-app::after{content:'↓';font-size:17px;line-height:1}
+}
