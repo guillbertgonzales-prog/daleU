@@ -49,6 +49,16 @@
       link.setAttribute('aria-label','Ver detalles y estadísticas de '+(event.strEvent||'este partido')+' en TheSportsDB');
       section.append(link);
     }
+    if(event.strHomeTeam&&event.strAwayTeam){
+      const google=document.createElement('a');
+      google.className='match-stats-link match-google-link';
+      const query=[event.strHomeTeam,'vs',event.strAwayTeam,event.dateEvent||'','partido estadísticas'].join(' ');
+      google.href='https://www.google.com/search?'+new URLSearchParams({q:query}).toString();
+      google.target='_blank';google.rel='noopener noreferrer';
+      google.textContent='🔎 Ver en Google ↗';
+      google.setAttribute('aria-label','Buscar '+event.strHomeTeam+' contra '+event.strAwayTeam+' en Google');
+      section.append(google);
+    }
     return section;
   }
   async function get(path){
