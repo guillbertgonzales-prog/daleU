@@ -59,6 +59,37 @@
       google.setAttribute('aria-label','Buscar '+event.strHomeTeam+' contra '+event.strAwayTeam+' en Google');
       section.append(google);
     }
+    if(/^\d+$/.test(String(event.idEvent||''))){
+      const statsDetails=document.createElement('details');statsDetails.className='match-inline-stats';
+      const summary=document.createElement('summary');summary.textContent='Estadísticas del partido';statsDetails.append(summary);
+      const content=document.createElement('div');content.className='match-stats-content';content.setAttribute('role','status');statsDetails.append(content);
+      let requested=false;
+      statsDetails.addEventListener('toggle',async()=>{
+        if(!statsDetails.open||requested)return;
+        requested=true;content.textContent='Cargando estadísticas…';
+        try{
+          const response=await fetch(base+'lookupeventstats.php?id='+encodeURIComponent(event.idEvent),{cache:'no-store'});
+          if(!response.ok)throw Error('No disponible');
+          const data=await response.json(),rows=Array.isArray(data.eventstats)?data.eventstats:[];
+          content.replaceChildren();
+          if(!rows.length){content.textContent='Las estadísticas aún no están disponibles para este partido.';return}
+          const labels={'Shots on Goal':'Remates al arco','Shots off Goal':'Remates fuera','Total Shots':'Remates totales','Blocked Shots':'Remates bloqueados','Shots insidebox':'Remates dentro del área','Shots outsidebox':'Remates fuera del área','Ball Possession':'Posesión','Corner Kicks':'Tiros de esquina','Fouls':'Faltas','Yellow Cards':'Tarjetas amarillas','Red Cards':'Tarjetas rojas','Offsides':'Fuera de juego','Goalkeeper Saves':'Atajadas','Total passes':'Pases totales','Passes accurate':'Pases precisos'};
+          const table=document.createElement('table');table.className='match-stats-table';
+          const caption=document.createElement('caption');caption.textContent='Estadísticas: '+(event.strHomeTeam||'Local')+' y '+(event.strAwayTeam||'Visitante');table.append(caption);
+          const head=document.createElement('thead'),tr=document.createElement('tr');
+          for(const name of [event.strHomeTeam||'Local','Estadística',event.strAwayTeam||'Visitante']){const th=document.createElement('th');th.scope='col';th.textContent=name;tr.append(th)}head.append(tr);table.append(head);
+          const body=document.createElement('tbody');
+          for(const item of rows.slice(0,15)){
+            if(!item||!item.strStat)continue;
+            const row=document.createElement('tr');
+            for(const value of [item.intHome,labels[item.strStat]||item.strStat,item.intAway]){const cell=document.createElement('td');cell.textContent=value==null||value===''?'—':String(value);row.append(cell)}body.append(row);
+          }
+          if(!body.children.length){content.textContent='Las estadísticas aún no están disponibles para este partido.';return}
+          table.append(body);content.append(table);
+        }catch{content.textContent='No se pudieron cargar las estadísticas. Toca de nuevo para reintentar.';requested=false}
+      });
+      section.append(statsDetails);
+    }
     return section;
   }
   async function get(path){
