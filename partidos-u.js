@@ -16,6 +16,44 @@
     const time=new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',hour:'numeric',minute:'2-digit',hour12:true}).format(d);
     return date+' · '+time+' (hora de Perú)';
   }
+  async function espnStats(event){
+    if(String(event.idLeague)!=='4688'||!event.strTimestamp)return null;
+    const raw=event.strTimestamp,at=Date.parse(/(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw)?raw:raw+'Z');
+    if(!Number.isFinite(at))return null;
+    const year=new Date(at).getUTCFullYear();
+    const endpoint='https://site.api.espn.com/apis/site/v2/sports/soccer/per.1/';
+    const scheduleResponse=await fetch(endpoint+'teams/2685/schedule?season='+year,{cache:'no-store'});
+    if(!scheduleResponse.ok)throw Error('ESPN no disponible');
+    const schedule=await scheduleResponse.json();
+    const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const sameTeam=(a,b)=>{a=norm(a);b=norm(b);return a.length>=5&&b.length>=5&&(a===b||a.startsWith(b+' ')||b.startsWith(a+' '))};
+    const uHome=String(event.idHomeTeam)==='138329',uAway=String(event.idAwayTeam)==='138329';
+    if(uHome===uAway)return null;
+    const opponent=uHome?event.strAwayTeam:event.strHomeTeam;
+    const candidates=(schedule.events||[]).filter(item=>{
+      const diff=Math.abs(Date.parse(item.date)-at);
+      if(!Number.isFinite(diff)||diff>2*60*60*1000)return false;
+      const teams=item.competitions?.[0]?.competitors||[];
+      const u=teams.find(t=>String(t.team?.id)==='2685');
+      const other=teams.find(t=>String(t.team?.id)!=='2685');
+      return u&&other&&u.homeAway===(uHome?'home':'away')&&sameTeam(opponent,other.team?.displayName);
+    });
+    if(candidates.length!==1||!/^\d+$/.test(String(candidates[0].id||'')))return null;
+    const response=await fetch(endpoint+'summary?event='+encodeURIComponent(candidates[0].id),{cache:'no-store'});
+    if(!response.ok)throw Error('ESPN no disponible');
+    const result=await response.json(),teams=result.boxscore?.teams||[];
+    const home=teams.find(t=>t.homeAway==='home'),away=teams.find(t=>t.homeAway==='away');
+    if(!home||!away||String((uHome?home:away).team?.id)!=='2685'||!sameTeam(opponent,(uHome?away:home).team?.displayName))return null;
+    const labels={possessionPct:'Posesión',totalShots:'Remates totales',shotsOnTarget:'Remates al arco',wonCorners:'Tiros de esquina',foulsCommitted:'Faltas',yellowCards:'Tarjetas amarillas',redCards:'Tarjetas rojas',offsides:'Fuera de juego',saves:'Atajadas',totalPasses:'Pases totales',accuratePasses:'Pases precisos'};
+    const values=team=>new Map((team.statistics||[]).map(item=>[item.name,item.displayValue]));
+    const h=values(home),a=values(away),rows=[];
+    for(const [key,label] of Object.entries(labels)){
+      if(!h.has(key)&&!a.has(key))continue;
+      const fmt=value=>value==null?'—':String(value)+(key==='possessionPct'&&!String(value).includes('%')?'%':'');
+      rows.push({strStat:label,intHome:fmt(h.get(key)),intAway:fmt(a.get(key))});
+    }
+    return rows.length?rows:null;
+  }
   function createLine(label,event,isLast){
     const section=document.createElement('div');
     section.className='match-result';
@@ -68,11 +106,17 @@
         if(!statsDetails.open||requested)return;
         requested=true;content.textContent='Cargando estadísticas…';
         try{
-          const response=await fetch(base+'lookupeventstats.php?id='+encodeURIComponent(event.idEvent),{cache:'no-store'});
-          if(!response.ok)throw Error('No disponible');
-          const data=await response.json(),rows=Array.isArray(data.eventstats)?data.eventstats:[];
+          let rows=[],source='TheSportsDB',failed=false;
+          try{
+            const response=await fetch(base+'lookupeventstats.php?id='+encodeURIComponent(event.idEvent),{cache:'no-store'});
+            if(!response.ok)throw Error('No disponible');
+            const data=await response.json();rows=Array.isArray(data.eventstats)?data.eventstats:[];
+          }catch{failed=true}
+          if(!rows.length){
+            try{const alternative=await espnStats(event);if(alternative?.length){rows=alternative;source='ESPN'}}catch{failed=true}
+          }
           content.replaceChildren();
-          if(!rows.length){content.textContent='Las estadísticas aún no están disponibles para este partido.';return}
+          if(!rows.length){content.textContent=failed?'No se pudieron consultar todas las fuentes o no hay estadísticas para este partido. Cierra y abre para reintentar.':'Las estadísticas aún no están disponibles para este partido.';if(failed)requested=false;return}
           const labels={'Shots on Goal':'Remates al arco','Shots off Goal':'Remates fuera','Total Shots':'Remates totales','Blocked Shots':'Remates bloqueados','Shots insidebox':'Remates dentro del área','Shots outsidebox':'Remates fuera del área','Ball Possession':'Posesión','Corner Kicks':'Tiros de esquina','Fouls':'Faltas','Yellow Cards':'Tarjetas amarillas','Red Cards':'Tarjetas rojas','Offsides':'Fuera de juego','Goalkeeper Saves':'Atajadas','Total passes':'Pases totales','Passes accurate':'Pases precisos'};
           const table=document.createElement('table');table.className='match-stats-table';
           const caption=document.createElement('caption');caption.textContent='Estadísticas: '+(event.strHomeTeam||'Local')+' y '+(event.strAwayTeam||'Visitante');table.append(caption);
@@ -85,7 +129,7 @@
             for(const value of [item.intHome,labels[item.strStat]||item.strStat,item.intAway]){const cell=document.createElement('td');cell.textContent=value==null||value===''?'—':String(value);row.append(cell)}body.append(row);
           }
           if(!body.children.length){content.textContent='Las estadísticas aún no están disponibles para este partido.';return}
-          table.append(body);content.append(table);
+          table.append(body);content.append(table);const credit=document.createElement('small');credit.textContent='Fuente de estadísticas: '+source;content.append(credit);
         }catch{content.textContent='No se pudieron cargar las estadísticas. Toca de nuevo para reintentar.';requested=false}
       });
       section.append(statsDetails);
