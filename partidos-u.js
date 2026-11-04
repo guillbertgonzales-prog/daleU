@@ -16,15 +16,21 @@
     const time=new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',hour:'numeric',minute:'2-digit',hour12:true}).format(d);
     return date+' · '+time+' (hora de Perú)';
   }
-  async function espnStats(event){
+  const espnSchedules=new Map();
+  function getEspnSchedule(year){
+    if(!espnSchedules.has(year)){
+      const request=fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/per.1/teams/2685/schedule?season='+year,{cache:'no-store'}).then(response=>{if(!response.ok)throw Error('ESPN no disponible');return response.json()}).catch(error=>{espnSchedules.delete(year);throw error});
+      espnSchedules.set(year,request);
+    }
+    return espnSchedules.get(year);
+  }
+  async function findEspnId(event){
     if(String(event.idLeague)!=='4688'||!event.strTimestamp)return null;
     const raw=event.strTimestamp,at=Date.parse(/(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw)?raw:raw+'Z');
     if(!Number.isFinite(at))return null;
     const year=new Date(at).getUTCFullYear();
     const endpoint='https://site.api.espn.com/apis/site/v2/sports/soccer/per.1/';
-    const scheduleResponse=await fetch(endpoint+'teams/2685/schedule?season='+year,{cache:'no-store'});
-    if(!scheduleResponse.ok)throw Error('ESPN no disponible');
-    const schedule=await scheduleResponse.json();
+    const schedule=await getEspnSchedule(year);
     const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
     const sameTeam=(a,b)=>{a=norm(a);b=norm(b);return a.length>=5&&b.length>=5&&(a===b||a.startsWith(b+' ')||b.startsWith(a+' '))};
     const uHome=String(event.idHomeTeam)==='138329',uAway=String(event.idAwayTeam)==='138329';
@@ -39,7 +45,17 @@
       return u&&other&&u.homeAway===(uHome?'home':'away')&&sameTeam(opponent,other.team?.displayName);
     });
     if(candidates.length!==1||!/^\d+$/.test(String(candidates[0].id||'')))return null;
-    const response=await fetch(endpoint+'summary?event='+encodeURIComponent(candidates[0].id),{cache:'no-store'});
+    return String(candidates[0].id);
+  }
+  async function espnStats(event){
+    const id=await findEspnId(event);
+    if(!id)return null;
+    const endpoint='https://site.api.espn.com/apis/site/v2/sports/soccer/per.1/';
+    const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const sameTeam=(a,b)=>{a=norm(a);b=norm(b);return a.length>=5&&b.length>=5&&(a===b||a.startsWith(b+' ')||b.startsWith(a+' '))};
+    const uHome=String(event.idHomeTeam)==='138329';
+    const opponent=uHome?event.strAwayTeam:event.strHomeTeam;
+    const response=await fetch(endpoint+'summary?event='+encodeURIComponent(id),{cache:'no-store'});
     if(!response.ok)throw Error('ESPN no disponible');
     const result=await response.json(),teams=result.boxscore?.teams||[];
     const home=teams.find(t=>t.homeAway==='home'),away=teams.find(t=>t.homeAway==='away');
@@ -87,6 +103,12 @@
       link.setAttribute('aria-label','Ver detalles y estadísticas de '+(event.strEvent||'este partido')+' en TheSportsDB');
       section.append(link);
     }
+    const espnLink=document.createElement('a');
+    espnLink.className='match-stats-link match-espn-link';
+    espnLink.target='_blank';espnLink.rel='noopener noreferrer';
+    espnLink.textContent='Ver en ESPN ↗';
+    espnLink.setAttribute('aria-label','Ver detalles y estadísticas de '+(event.strEvent||'este partido')+' en ESPN');
+    findEspnId(event).then(id=>{if(id){espnLink.href='https://www.espn.com/soccer/team-stats/_/gameId/'+encodeURIComponent(id);section.insertBefore(espnLink,section.querySelector('.match-google-link')||section.querySelector('.match-inline-stats'))}}).catch(()=>{});
     if(event.strHomeTeam&&event.strAwayTeam){
       const google=document.createElement('a');
       google.className='match-stats-link match-google-link';
