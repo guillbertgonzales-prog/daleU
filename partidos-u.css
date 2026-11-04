@@ -42,3 +42,5 @@
 @media(max-width:380px){.match-crest{width:46px;height:46px;border-radius:14px}.match-score{padding:6px 8px;font-size:17px}.match-widget-heading strong{font-size:13px}}
 
 .match-stats-link{display:inline-flex;align-items:center;justify-content:center;min-height:38px;margin-top:12px;padding:8px 12px;border:1px solid #e5cdb3;border-radius:10px;background:#fffaf2;color:#7d1725;font-size:12px;font-weight:800;text-decoration:none}.match-stats-link:hover{background:#f4e4d2;text-decoration:underline}.match-stats-link:focus-visible{outline:3px solid #c89455;outline-offset:3px}.dark-theme .match-stats-link{background:#4b3038;color:#f4dfd0;border-color:#77535d}
+
+.match-google-link{margin-left:6px}@media(max-width:380px){.match-google-link{margin-left:0}}
