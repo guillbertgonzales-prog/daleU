@@ -10,7 +10,7 @@
   function dateText(e){
     const iso=e.strTimestamp;
     if(!iso)return 'Fecha por confirmar';
-    const d=new Date(/(?:Z|[+-]\\d{2}:?\\d{2})$/i.test(iso)?iso:iso+'Z');
+    const d=new Date(/(?:Z|[+-]\d{2}:?\d{2})$/i.test(iso)?iso:iso+'Z');
     if(Number.isNaN(d.getTime()))return 'Fecha y hora por confirmar';
     const date=new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',dateStyle:'medium'}).format(d);
     const time=new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',hour:'numeric',minute:'2-digit',hour12:true}).format(d);
@@ -41,7 +41,7 @@
     if(['PST','POSTPONED','CANC','CANCELLED'].includes(status)||event.strPostponed==='yes')detail.textContent='Aplazado o sujeto a cambios · confirma en la web oficial';
     else detail.textContent=dateText(event)+(isLast?' · resultado reportado':'');
     section.append(detail);
-    if(/^\\d+$/.test(String(event.idEvent||''))){
+    if(/^\d+$/.test(String(event.idEvent||''))){
       const link=document.createElement('a');link.className='match-stats-link';
       link.href='https://www.thesportsdb.com/event/'+event.idEvent;
       link.target='_blank';link.rel='noopener noreferrer';
