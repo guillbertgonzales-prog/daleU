@@ -10,9 +10,11 @@
   function dateText(e){
     const iso=e.strTimestamp;
     if(!iso)return 'Fecha por confirmar';
-    const d=new Date(iso.endsWith('Z')?iso:iso+'Z');
-    if(Number.isNaN(d.getTime()))return 'Fecha por confirmar';
-    return new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',dateStyle:'medium',timeStyle:'short'}).format(d)+' · hora de Perú';
+    const d=new Date(/(?:Z|[+-]\\d{2}:?\\d{2})$/i.test(iso)?iso:iso+'Z');
+    if(Number.isNaN(d.getTime()))return 'Fecha y hora por confirmar';
+    const date=new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',dateStyle:'medium'}).format(d);
+    const time=new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',hour:'numeric',minute:'2-digit',hour12:true}).format(d);
+    return date+' · '+time+' (hora de Perú)';
   }
   function createLine(label,event,isLast){
     const section=document.createElement('div');
@@ -38,7 +40,16 @@
     const status=String(event.strStatus||'').toUpperCase();
     if(['PST','POSTPONED','CANC','CANCELLED'].includes(status)||event.strPostponed==='yes')detail.textContent='Aplazado o sujeto a cambios · confirma en la web oficial';
     else detail.textContent=dateText(event)+(isLast?' · resultado reportado':'');
-    section.append(detail);return section;
+    section.append(detail);
+    if(/^\\d+$/.test(String(event.idEvent||''))){
+      const link=document.createElement('a');link.className='match-stats-link';
+      link.href='https://www.thesportsdb.com/event/'+event.idEvent;
+      link.target='_blank';link.rel='noopener noreferrer';
+      link.textContent='Ver detalles y estadísticas ↗';
+      link.setAttribute('aria-label','Ver detalles y estadísticas de '+(event.strEvent||'este partido')+' en TheSportsDB');
+      section.append(link);
+    }
+    return section;
   }
   async function get(path){
     const response=await fetch(base+path+'?id=138329',{cache:'no-store'});
