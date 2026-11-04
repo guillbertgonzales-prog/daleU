@@ -1,0 +1,14 @@
+.modern-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:11px;background:#f2e1d0;color:#851624;vertical-align:middle}
+.modern-icon svg,.header-line-icon{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.goals-heading .goals-title-line{display:flex;align-items:center;gap:10px}
+.consistency>summary,.method-summary>summary{display:flex;align-items:center;gap:9px;cursor:pointer}
+.consistency>summary .modern-icon,.method-summary>summary .modern-icon{width:32px;height:32px}
+.streak-icon svg,.goal-emoji svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.goal-emoji{display:inline-flex!important;align-items:center;justify-content:center;color:#851624!important}
+.method-summary .method-label{display:inline-flex;align-items:center;gap:8px}
+.method-summary .method-label .modern-icon{width:27px;height:27px;border-radius:9px}
+.method-summary .method-label .modern-icon svg{width:16px;height:16px}
+#themeToggle,#logout,.music-page-button{align-items:center;justify-content:center;gap:6px}
+#themeToggle svg,#logout svg,.music-page-button svg{display:inline-block;width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dark-theme .modern-icon{background:#51323b;color:#f0d7bd}
+@media(max-width:650px){main > header .header-actions #logout::after{content:none}main > header .header-actions #logout .header-button-label{display:none}}
